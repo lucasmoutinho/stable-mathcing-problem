@@ -1,6 +1,5 @@
 #include <fstream>
 #include <iostream>
-#include "professor.h"
 #include "school.h"
 
 using namespace std;
