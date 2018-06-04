@@ -1,3 +1,12 @@
+// TRABALHO DE GRAFOS 3 - STABLE MATHING PROBLEM
+// UNB - UNIVERSIDADE DE BRASÍLIA
+
+// ALUNOS:
+
+// * 1: Lucas da Silva Moutinho - 15/0015747
+// * 2: Emmanuel Gustavo Rinaldi Perotto - 15/0124163
+
+
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -215,7 +224,6 @@ void professorMatch(list<Professor> *professors, list<School> *schools){
           if(jt->isFull()){
             advance(jt,1);
           }
-          jt->showProfessorsList();
           jt->makeAllocation(&(*it), professors);
         }
         else{
