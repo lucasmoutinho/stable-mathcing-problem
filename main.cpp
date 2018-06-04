@@ -11,9 +11,11 @@ using namespace std;
 bool readFile(list<Professor> professors, list<School> schools);
 int getNumber(string word);
 void separateNumber(string word, int *id, int *habilitation, int *job);
-void showProfessors(list<Professor> professors);
+void showProfessors(list<Professor> *professors);
+void showSchools(list<School> *schools);
 
 void showProfessors(list<Professor> *professors){
+  cout << endl << endl << "-------------- LIST OF PROFESSORS -------------------" << endl << endl;
   for (std::list<Professor>::iterator it = professors->begin(); it != professors->end(); ++it)
   {
     cout << "ID: " << it->getId() << " || ";
@@ -23,8 +25,21 @@ void showProfessors(list<Professor> *professors){
     for (std::list<int>::iterator jt = preferences.begin(); jt != preferences.end(); ++jt){
       cout << *jt << " ";
     }
-    cout << endl << endl;
+    cout << endl;
   }
+  cout << endl << endl << "----------------------------------------------------" << endl << endl;
+}
+
+void showSchools(list<School> *schools){
+  cout << endl << endl << "-------------- LIST OF SCHOOLS -------------------" << endl << endl;
+  for (std::list<School>::iterator it = schools->begin(); it != schools->end(); ++it)
+  {
+    cout << "ID: " << it->getId() << " || ";
+    cout << "Habilitation: " << it->getHabilitation() << " || ";
+    cout << "Jobs: " << it->getJobs() << " || ";
+    cout << endl;
+  }
+  cout << endl << endl << "----------------------------------------------------" << endl << endl;
 }
 
 int getNumber(string word){
@@ -88,6 +103,7 @@ void separateNumber(string word, int *id, int *habilitation, int *job){
   int j = 0;
   if(word[3] == ')'){
     aux = word[2];
+    istringstream(aux) >> result;
   }
   else{
     aux2 = word[2];
@@ -98,9 +114,13 @@ void separateNumber(string word, int *id, int *habilitation, int *job){
     result = result + decimal;
     j = 1;
   }
-  result >> *id;
-  *habilitation = (int)word[6+j];
-  *job = (int)word[10+j];
+  *id = result;
+  aux = word[6+j];
+  istringstream(aux) >> result;
+  *habilitation = result;
+  aux = word[10+j];
+  istringstream(aux) >> result;
+  *job = result;
 }
 
 bool readFile(list<Professor> *professors, list<School> *schools){
@@ -154,6 +174,7 @@ int main(){
 
   if(readFile(&professors, &schools)){
     showProfessors(&professors);
+    showSchools(&schools);
   }
   return 0;
 }
