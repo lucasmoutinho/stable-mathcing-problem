@@ -15,7 +15,9 @@ void showProfessors(list<Professor> *professors);
 void showSchools(list<School> *schools);
 void showMatches(list<School> *schools) ;
 void professorMatch(list<Professor> *professors, list<School> *schools);
+int menu();
 
+// Show all professors
 void showProfessors(list<Professor> *professors){
   cout << endl << endl << "-------------- LIST OF PROFESSORS -------------------" << endl << endl;
   for (std::list<Professor>::iterator it = professors->begin(); it != professors->end(); ++it)
@@ -32,6 +34,7 @@ void showProfessors(list<Professor> *professors){
   cout << endl << endl << "----------------------------------------------------" << endl << endl;
 }
 
+// Show all schools
 void showSchools(list<School> *schools){
   cout << endl << endl << "-------------- LIST OF SCHOOLS -------------------" << endl << endl;
   for (std::list<School>::iterator it = schools->begin(); it != schools->end(); ++it)
@@ -44,6 +47,7 @@ void showSchools(list<School> *schools){
   cout << endl << endl << "----------------------------------------------------" << endl << endl;
 }
 
+// Show all matches of schools and professor who got the jobs
 void showMatches(list<School> *schools){
   cout << endl << endl << "-------------- LIST OF MATCHES -------------------" << endl << endl;
   for (std::list<School>::iterator it = schools->begin(); it != schools->end(); ++it)
@@ -63,6 +67,7 @@ void showMatches(list<School> *schools){
 }
 
 int getNumber(string word){
+  // Return the number within the string given for a professor
   string aux;
   string aux2;
   string aux3;
@@ -116,6 +121,7 @@ int getNumber(string word){
 }
 
 void separateNumber(string word, int *id, int *habilitation, int *job){
+  // Return the number within the string given for a school
   string aux;
   string aux2;
   int decimal = 0;
@@ -143,6 +149,7 @@ void separateNumber(string word, int *id, int *habilitation, int *job){
   *job = result;
 }
 
+// Read file with determined schema
 bool readFile(list<Professor> *professors, list<School> *schools){
   string line;
   string aux1, aux2, aux3, aux4, aux5, aux6, aux7;
@@ -158,6 +165,7 @@ bool readFile(list<Professor> *professors, list<School> *schools){
       stringstream is(line);
       if(line[0] == '('){
         if(line[1] == 'P'){
+          // Professors lines
           is >> aux1 >> aux2 >> aux3 >> aux4 >> aux5 >> aux6 >> aux7;
           id = getNumber(aux1);
           habilitation = getNumber(aux2);
@@ -170,6 +178,7 @@ bool readFile(list<Professor> *professors, list<School> *schools){
           professors->push_back(prof);
         }
         else{
+          // Schools lines
           is >> aux1;
           separateNumber(aux1,&id, &habilitation, &jobs);
           School sch = School(id, habilitation, jobs);
@@ -186,18 +195,22 @@ bool readFile(list<Professor> *professors, list<School> *schools){
   return false;
 }
 
+// Allocation of professors in schools priritazing professors preferences
 void professorMatch(list<Professor> *professors, list<School> *schools){
   bool flagend = false;
   int prof_preference;
 
+  // Continue if there is a professor without job and a school with a job opening
   while(!flagend){
     flagend = true;
     for (std::list<Professor>::iterator it = professors->begin(); it != professors->end(); ++it)
     {
+      // See if its allocated
       if(!(it->isAllocated())){
-        prof_preference = it->getPreference();
+        prof_preference = it->getPreference(); // get professor preference
 
-        if(prof_preference == 0){
+        if(prof_preference == 0){ // See if preferences list is empty ( all jobs are occupied )
+          // Try to allocate a professor in any job opening left
           list<School>::iterator jt = schools->begin();
           if(jt->isFull()){
             advance(jt,1);
@@ -206,28 +219,85 @@ void professorMatch(list<Professor> *professors, list<School> *schools){
           jt->makeAllocation(&(*it), professors);
         }
         else{
+          // See if professor can get a job of preference
           prof_preference--;
 
           list<School>::iterator jt = schools->begin();
-          advance(jt, prof_preference);
+          advance(jt, prof_preference); // gets the school of preference in list
           
-          jt->showProfessorsList();
-          jt->makeAllocation(&(*it), professors);
+          jt->makeAllocation(&(*it), professors); // try to allocate professor in preference school
 
-          flagend = false;
+          flagend = false; // An allocation was made, loop has to continue
         }
       }
     }
   }
 }
 
+// Menu
+int menu(){
+  int option = 0;
+  bool invalid = true;
+
+  while(invalid){
+    invalid = false;
+
+    // Select one of these options
+    // 0 - exit
+    // 1 - View all professors and schools
+    // 2 - Allocate professors in schools prioritazing professors preferences
+    cout << "Selecione entre as opções abaixo:" << endl;
+    cout << "0 - Sair do sistema" << endl;
+    cout << "1 - Visualizar todos as escolas e professores" << endl;
+    cout << "2 - Realizar o emparelhamento priorizando a preferência dos professores" << endl;
+    cin >> option;
+    if(option != 0 && option != 1 && option != 2){
+      // Invalid option
+      cout << endl << "Opção invalida" << endl;
+      invalid = true;
+    }
+  }
+  
+  return option;
+}
+
+// Main
 int main(){
+  // List os professors and schools
   list<Professor> professors;
   list<School> schools;
+  int option = 1;
 
+  // Welcome to the allocation system of professors (P) in schools (E)
+  cout << "-----------------------------------------------------------------------------------" << endl;
+  cout << "Bem vindo ao sistema de emparelhamento (alocação) de professores (P) em escolas (E) " << endl;
+  cout << "-----------------------------------------------------------------------------------" << endl << endl;
+
+  // Read input file guided by the schema in entradaProj3TAG.txt
   if(readFile(&professors, &schools)){
-    professorMatch(&professors, &schools);
-    showMatches(&schools);
+
+    // Menu options
+     while(option != 0){
+      option = menu();
+      
+      switch (option)
+      {
+        case 1:
+          showProfessors(&professors);
+          showSchools(&schools);
+          break;
+
+        case 2:
+          professorMatch(&professors, &schools);
+          showMatches(&schools);
+          break;
+
+        default:
+          cout << endl << "Saindo ..." << endl; //EXITING...
+          break;
+      }
+      
+    }
   }
   return 0;
 }

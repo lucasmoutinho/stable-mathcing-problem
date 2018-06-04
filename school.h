@@ -2,9 +2,11 @@
 #include <iostream>
 #include "professor.h"
 
+// Class School
 class School{
 private:
 
+  // Has id, hab, job ans a list of id from professors who got the jobs
   int id;
   int habilitation;
   int jobs;

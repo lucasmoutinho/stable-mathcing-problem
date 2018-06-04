@@ -1,8 +1,11 @@
 #include <list>
 #include <iostream>
 
+// Class Professor
 class Professor{
 private:
+
+  // Has id, hab, job ans a list of preferences schools of the professor
   int id;
   int habilitation;
   std::list<int> preferences; 
