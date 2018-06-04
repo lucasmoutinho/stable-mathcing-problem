@@ -23,7 +23,10 @@ void separateNumber(string word, int *id, int *habilitation, int *job);
 void showProfessors(list<Professor> *professors);
 void showSchools(list<School> *schools);
 void showMatches(list<School> *schools) ;
-void professorMatch(list<Professor> *professors, list<School> *schools);
+int professorMatch(list<Professor> *professors, list<School> *schools);
+bool hasJobsLeft(list<School> *schools);
+int schoolLeft(list<School> *schools);
+bool readFile(list<Professor> *professors, list<School> *schools);
 int menu();
 
 // Show all professors
@@ -204,27 +207,54 @@ bool readFile(list<Professor> *professors, list<School> *schools){
   return false;
 }
 
+// Return if there is any school with Jobs Left
+bool hasJobsLeft(list<School> *schools){
+  bool left = false;
+  for (std::list<School>::iterator it = schools->begin(); it != schools->end(); ++it)
+  {
+    if(!(it->jobsLeft())){
+      left = true;
+      break;
+    }
+  }
+  return left;
+}
+
+// Return the id with any jobs left
+int schoolLeft(list<School> *schools){
+  int id = 0;
+  for (std::list<School>::iterator it = schools->begin(); it != schools->end(); ++it)
+  {
+    if (!(it->jobsLeft()))
+    {
+      id = it->getId();
+      break;
+    }
+  }
+  return id;
+}
+
 // Allocation of professors in schools priritazing professors preferences
-void professorMatch(list<Professor> *professors, list<School> *schools){
-  bool flagend = false;
+int professorMatch(list<Professor> *professors, list<School> *schools){
   int prof_preference;
+  int id_found;
 
   // Continue if there is a professor without job and a school with a job opening
-  while(!flagend){
-    flagend = true;
-    for (std::list<Professor>::iterator it = professors->begin(); it != professors->end(); ++it)
-    {
+  while(hasJobsLeft(schools)){
+    for (std::list<Professor>::iterator it = professors->begin(); it != professors->end(); ++it){
       // See if its allocated
       if(!(it->isAllocated())){
         prof_preference = it->getPreference(); // get professor preference
 
         if(prof_preference == 0){ // See if preferences list is empty ( all jobs are occupied )
           // Try to allocate a professor in any job opening left
-          list<School>::iterator jt = schools->begin();
-          if(jt->isFull()){
-            advance(jt,1);
+          id_found = schoolLeft(schools);
+          if(id_found!=0){
+            list<School>::iterator kt = schools->begin();
+            id_found--;
+            advance(kt, id_found);
+            kt->makeAllocation(&(*it), professors);
           }
-          jt->makeAllocation(&(*it), professors);
         }
         else{
           // See if professor can get a job of preference
@@ -234,12 +264,12 @@ void professorMatch(list<Professor> *professors, list<School> *schools){
           advance(jt, prof_preference); // gets the school of preference in list
           
           jt->makeAllocation(&(*it), professors); // try to allocate professor in preference school
-
-          flagend = false; // An allocation was made, loop has to continue
         }
+
       }
     }
   }
+  return 0;
 }
 
 // Menu
