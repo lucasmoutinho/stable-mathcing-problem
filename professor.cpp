@@ -23,6 +23,9 @@ int Professor::getHabilitation()
 }
 
 int Professor::getPreference(){
+  if(this->preferences.empty()){
+    return 0;
+  }
   return this->preferences.front();
 }
 

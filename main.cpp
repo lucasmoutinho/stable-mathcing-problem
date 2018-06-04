@@ -13,6 +13,8 @@ int getNumber(string word);
 void separateNumber(string word, int *id, int *habilitation, int *job);
 void showProfessors(list<Professor> *professors);
 void showSchools(list<School> *schools);
+void showMatches(list<School> *schools) ;
+void professorMatch(list<Professor> *professors, list<School> *schools);
 
 void showProfessors(list<Professor> *professors){
   cout << endl << endl << "-------------- LIST OF PROFESSORS -------------------" << endl << endl;
@@ -37,6 +39,23 @@ void showSchools(list<School> *schools){
     cout << "ID: " << it->getId() << " || ";
     cout << "Habilitation: " << it->getHabilitation() << " || ";
     cout << "Jobs: " << it->getJobs() << " || ";
+    cout << endl;
+  }
+  cout << endl << endl << "----------------------------------------------------" << endl << endl;
+}
+
+void showMatches(list<School> *schools){
+  cout << endl << endl << "-------------- LIST OF MATCHES -------------------" << endl << endl;
+  for (std::list<School>::iterator it = schools->begin(); it != schools->end(); ++it)
+  {
+    cout << "School E" << it->getId() << " ";
+    cout << "Hab: " << it->getHabilitation() << " || ";
+    cout << "Professors: ";
+    list<int> professors = it->getProfessors();
+    for (std::list<int>::iterator jt = professors.begin(); jt != professors.end(); ++jt)
+    {
+      cout << "P" << *jt << " ";
+    }
     cout << endl;
   }
   cout << endl << endl << "----------------------------------------------------" << endl << endl;
@@ -149,7 +168,6 @@ bool readFile(list<Professor> *professors, list<School> *schools){
           // cout << id << habilitation << preferences[0] << preferences[1] << preferences[2] << preferences[3] << preferences[4] << endl;
           Professor prof = Professor(id, habilitation, preferences);
           professors->push_back(prof);
-          cout << professors->size() << endl;
         }
         else{
           is >> aux1;
@@ -168,13 +186,48 @@ bool readFile(list<Professor> *professors, list<School> *schools){
   return false;
 }
 
+void professorMatch(list<Professor> *professors, list<School> *schools){
+  bool flagend = false;
+  int prof_preference;
+
+  while(!flagend){
+    flagend = true;
+    for (std::list<Professor>::iterator it = professors->begin(); it != professors->end(); ++it)
+    {
+      if(!(it->isAllocated())){
+        prof_preference = it->getPreference();
+
+        if(prof_preference == 0){
+          list<School>::iterator jt = schools->begin();
+          if(jt->isFull()){
+            advance(jt,1);
+          }
+          jt->showProfessorsList();
+          jt->makeAllocation(&(*it), professors);
+        }
+        else{
+          prof_preference--;
+
+          list<School>::iterator jt = schools->begin();
+          advance(jt, prof_preference);
+          
+          jt->showProfessorsList();
+          jt->makeAllocation(&(*it), professors);
+
+          flagend = false;
+        }
+      }
+    }
+  }
+}
+
 int main(){
   list<Professor> professors;
   list<School> schools;
 
   if(readFile(&professors, &schools)){
-    showProfessors(&professors);
-    showSchools(&schools);
+    professorMatch(&professors, &schools);
+    showMatches(&schools);
   }
   return 0;
 }
