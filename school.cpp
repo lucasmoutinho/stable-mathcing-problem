@@ -55,7 +55,6 @@ Professor *School::findWorst(list<Professor> *professors, Professor* professor)
       worst = aux;
     }
   }
-  cout << "worst: P"<< worst->getId() << endl;
   return worst;
 }
 

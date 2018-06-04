@@ -49,7 +49,8 @@ void showMatches(list<School> *schools){
   for (std::list<School>::iterator it = schools->begin(); it != schools->end(); ++it)
   {
     cout << "School E" << it->getId() << " ";
-    cout << "Hab: " << it->getHabilitation() << " || ";
+    cout << "-- Hab: " << it->getHabilitation() << " ";
+    cout << "-- Jobs: " << it->getJobs() << " || ";
     cout << "Professors: ";
     list<int> professors = it->getProfessors();
     for (std::list<int>::iterator jt = professors.begin(); jt != professors.end(); ++jt)
@@ -165,7 +166,6 @@ bool readFile(list<Professor> *professors, list<School> *schools){
           preferences[2] = getNumber(aux5);
           preferences[3] = getNumber(aux6);
           preferences[4] = getNumber(aux7);
-          // cout << id << habilitation << preferences[0] << preferences[1] << preferences[2] << preferences[3] << preferences[4] << endl;
           Professor prof = Professor(id, habilitation, preferences);
           professors->push_back(prof);
         }
