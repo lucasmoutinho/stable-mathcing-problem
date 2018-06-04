@@ -212,7 +212,7 @@ bool hasJobsLeft(list<School> *schools){
   bool left = false;
   for (std::list<School>::iterator it = schools->begin(); it != schools->end(); ++it)
   {
-    if(!(it->jobsLeft())){
+    if(it->jobsLeft()){
       left = true;
       break;
     }
@@ -225,7 +225,7 @@ int schoolLeft(list<School> *schools){
   int id = 0;
   for (std::list<School>::iterator it = schools->begin(); it != schools->end(); ++it)
   {
-    if (!(it->jobsLeft()))
+    if (it->jobsLeft())
     {
       id = it->getId();
       break;

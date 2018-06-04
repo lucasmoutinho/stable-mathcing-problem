@@ -39,9 +39,9 @@ bool School::jobsLeft()
 {
   if (this->prof.size() >= unsigned(this->jobs))
   {
-    return true;
+    return false;
   }
-  return false;
+  return true;
 }
 
 Professor *School::findProfessor(list<Professor> *professors, int id){
