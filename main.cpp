@@ -23,25 +23,43 @@ void showProfessors(list<Professor> professor){
 
 int getNumber(string word){
   string aux;
-  int result;
+  string aux2;
+  int decimal = 0;
+  int result = 0;
   if(word[0] == '('){
     if(word[3] == ','){
       aux = word[2];
+      istringstream(aux) >> result;
     }
     else{
-      aux = word[2] + word[3];
+      aux2 = word[2];
+      aux = word[3];
+      istringstream(aux) >> result;
+      istringstream(aux2) >> decimal;
+      decimal *= 10;
+      result = result + decimal;
+
     }
   }
   else{
-    if(word[2] == ','){
+    if(word[2] == ',' || word[2] == ')'){
       aux = word[1];
+      istringstream(aux) >> result;
+    }
+    else if(word[1] == ')'){
+      aux = word[0];
+      istringstream(aux) >> result;
     }
     else{
-      aux = word[1] + word[2];
+      aux2 = word[1];
+      aux = word[2];
+      istringstream(aux) >> result;
+      istringstream(aux2) >> decimal;
+      decimal *= 10;
+      result = result + decimal;
     }
   }
-  istringstream convert(aux);
-  convert >> result;
+  cout << result << endl;
   return result;
 }
 
@@ -55,8 +73,7 @@ void separateNumber(string word, int *id, int *habilitation, int *job){
     aux = word[2] + word[3];
     j = 1;
   }
-  istringstream convert(aux);
-  convert >> *id;
+  istringstream(aux) >> *id;
   *habilitation = (int)word[6+j];
   *job = (int)word[10+j];
 }
@@ -71,10 +88,12 @@ bool readFile(list<Professor> professors, list<School> schools){
 
   ifstream fp("entradaProj3TAG.txt");
   if (fp.is_open()){
-    while (getline(fp, line)){
+    while (!fp.eof()){
+      getline(fp, line); /*pega uma linha inteira do .txt*/
+      stringstream is(line);
       if(line[0] == '('){
         if(line[1] == 'P'){
-          fp >> aux1 >> aux2 >> aux3 >> aux4 >> aux5 >> aux6 >> aux7;
+          is >> aux1 >> aux2 >> aux3 >> aux4 >> aux5 >> aux6 >> aux7;
           id = getNumber(aux1);
           habilitation = getNumber(aux2);
           preferences[0] = getNumber(aux3);
@@ -82,11 +101,13 @@ bool readFile(list<Professor> professors, list<School> schools){
           preferences[2] = getNumber(aux5);
           preferences[3] = getNumber(aux6);
           preferences[4] = getNumber(aux7);
+          // cout << id << habilitation << preferences[0] << preferences[1] << preferences[2] << preferences[3] << preferences[4] << endl;
           Professor prof = Professor(id, habilitation, preferences);
+
           professors.push_back(prof);
         }
         else{
-          fp >> aux1;
+          is >> aux1;
           separateNumber(aux1,&id, &habilitation, &jobs);
           School sch = School(id, habilitation, jobs);
           schools.push_back(sch);
