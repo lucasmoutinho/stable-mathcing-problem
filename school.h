@@ -20,6 +20,7 @@ private:
 public:
   School(int id, int habilitation, int jobs);
 
+  bool jobsLeft();
   bool isFull();
   int getId();
   int getHabilitation();

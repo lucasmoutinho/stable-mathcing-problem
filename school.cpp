@@ -35,6 +35,15 @@ bool School::isFull(){
   return false;
 }
 
+bool School::jobsLeft()
+{
+  if (this->prof.size() >= unsigned(this->jobs))
+  {
+    return true;
+  }
+  return false;
+}
+
 Professor *School::findProfessor(list<Professor> *professors, int id){
   list<Professor>::iterator jt = professors->begin();
   id--;
@@ -65,7 +74,6 @@ void School::addProfessor(int professor){
 void School::makeAllocation(Professor *professor, list<Professor> *professors){
   professor->makeAllocation();
   this->addProfessor(professor->getId());
-
   if(this->isFull()){
     Professor* worst = findWorst(professors, professor);
     worst->removePreference(this->getId());
